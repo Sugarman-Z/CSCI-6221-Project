@@ -1,57 +1,66 @@
 package com.gwu.recommender
 
-import com.mongodb.casbah.Imports.{MongoClientURI, MongoDBObject}
-import com.mongodb.casbah.MongoClient
-import com.sun.xml.internal.bind.v2.TODO
+import com.mongodb.casbah.commons.MongoDBObject
+import com.mongodb.casbah.{MongoClient, MongoClientURI}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
+/**
+ * 13543                                productId
+ * 蔡康永的说话之道                        productName
+ * 832,519,402                          classificationId, don't need
+ * B0047Y19CI                           amazonId, don't need
+ * https://images-cn-4.ssl-images       productImageUrl
+ * 青春文学|文学艺术|图书音像               productClassification
+ * 蔡康永|写的真好|不贵|内容不错|书          UserUGCTag
+ */
+case class Product(
+                    productId: Int,
+                    name: String,
+                    imageUrl: String,
+                    categories: String,
+                    tags: String
+                  )
 
 /**
- * Product data
- * 3982                           productId
- * Fuhlen 富勒 M8眩光舞者时尚节能     productName
- * https://images-cn-4.ssl-image  productImageUrl
- * 外设产品/鼠标/电脑/办公            productClassification
- * 富勒/鼠标/电子产品/好用/外观漂亮     UGCTags
+ * 4867   userId
+ * 457976 productId
+ * 5.0    rating
+ * 1395676800 timestamp
  */
-case class Product( productId: Int, name: String, imageUrl: String, categories: String, tags: String)
+case class Rating(
+                   userId: Int,
+                   productId: Int,
+                   score: Double,
+                   timestamp: Int
+                 )
 
 /**
- * Rating data
- * 4867       userId
- * 457976     productId
- * 5.0        rating
- * 1395676800 timeStamp
+ * MongoDB连接配置
+ * @param uri 连接url
+ * @param db 要操作的db
  */
-case class Rating( userId: Int, productId: Int, score: Double, timestamp: Int)
-
-
-/**
- * MongoDB connection config
- * @param uri   MongoDB connection uri
- * @param db    target database
- */
-case class MongoConfig( uri: String, db: String )
+case class MongoConfig(uri: String, db: String)
 
 object DataLoader {
-  // assign data path
-  val PRODUCT_DATA_PATH = "D:\\JavaProject\\CSCI6221project\\recommender\\DataLoader\\src\\main\\resources\\products.csv"
-  val RATING_DATA_PATH = "D:\\JavaProject\\CSCI6221project\\recommender\\DataLoader\\src\\main\\resources\\ratings.csv"
-  // define mongodb table name
+
+  // define file path
+  val PRODUCT_DATA_PATH = "recommender/DataLoader/src/main/resources/products.csv"
+  val RATING_DATA_PATH = "recommender/DataLoader/src/main/resources/ratings.csv"
+  // define mongo table name
   val MONGODB_PRODUCT_COLLECTION = "Product"
   val MONGODB_RATING_COLLECTION = "Rating"
 
-
   def main(args: Array[String]): Unit = {
-    // TODO: create MongoDB database
+
     val config = Map(
       "spark.cores" -> "local[*]",
       "mongo.uri" -> "mongodb://localhost:27017/recommender",
       "mongo.db" -> "recommender"
     )
+
     // create spark config
-    val sparkConf = new SparkConf().setMaster(config("spark.cores")).setAppName("DataLoader")
+    val sparkConf: SparkConf = new SparkConf().setMaster(config("spark.cores")).setAppName("DataLoader")
     // create spark session
     val spark = SparkSession.builder().config(sparkConf).getOrCreate()
 
@@ -60,37 +69,39 @@ object DataLoader {
     // load data
     val productRDD = spark.sparkContext.textFile(PRODUCT_DATA_PATH)
     val productDF = productRDD.map( item => {
-      // split product data with ^
-      val attr = item.split("\\^")
-      // convert to Product class and return
-      Product( attr(0).toInt, attr(1).trim, attr(4).trim, attr(5).trim, attr(6).trim )
-    } ).toDF()
+      // split data with '^'
+      var attr = item.split("\\^")
+      // convert to Product class
+      Product( attr(0).toInt, attr(1).trim, attr(4).trim, attr(5).trim, attr(6).trim)
+    }).toDF()
 
     val ratingRDD = spark.sparkContext.textFile(RATING_DATA_PATH)
     val ratingDF = ratingRDD.map( item => {
       val attr = item.split(",")
-      Rating( attr(0).toInt, attr(1).toInt, attr(2).toDouble, attr(3).toInt )
+      Rating(attr(0).toInt, attr(1).toInt, attr(2).toDouble, attr(3).toInt)
     }).toDF()
 
-    implicit val mongoConfig = MongoConfig( config("mongo.uri"), config("mongo.db") )
-    storeDataInMongoDB( productDF, ratingDF )
+    // implicit parameter
+    implicit val mongoConfig: MongoConfig = MongoConfig(config("mongo.uri"), config("mongo.db"))
 
-//    spark.stop()
+    // store to MongoDB
+    storeDataInMongoDB(productDF, ratingDF)
+
+    spark.stop()
   }
 
-  def storeDataInMongoDB( productDF: DataFrame, ratingDF: DataFrame)(implicit mongoConfig: MongoConfig): Unit = {
-    // create a mongodb connection (client)
-    val mongoClient = MongoClient( MongoClientURI(mongoConfig.uri) )
-    // define operation collection
-    // means db.Product
-    val productCollection = mongoClient( mongoConfig.db )( MONGODB_PRODUCT_COLLECTION )
-    val ratingCollection = mongoClient( mongoConfig.db )( MONGODB_RATING_COLLECTION )
+  def storeDataInMongoDB(productDF: DataFrame, ratingDF: DataFrame)(implicit mongoConfig: MongoConfig): Unit ={
+    // new a mongoClient
+    val mongoClient = MongoClient(MongoClientURI(mongoConfig.uri))
+    // define operation table
+    val productCollection = mongoClient(mongoConfig.db)(MONGODB_PRODUCT_COLLECTION)
+    val ratingCollection = mongoClient(mongoConfig.db)(MONGODB_RATING_COLLECTION)
 
-    // if collection exists then drop
+    // if exists, delete
     productCollection.dropCollection()
     ratingCollection.dropCollection()
 
-    // store data to collection
+    // store current data
     productDF.write
       .option("uri", mongoConfig.uri)
       .option("collection", MONGODB_PRODUCT_COLLECTION)
@@ -105,11 +116,12 @@ object DataLoader {
       .format("com.mongodb.spark.sql")
       .save()
 
-    // create index for collection
-    productCollection.createIndex( MongoDBObject( "productId" -> 1) )
-    ratingCollection.createIndex( MongoDBObject( "productId" -> 1) )
-    ratingCollection.createIndex( MongoDBObject( "userId" -> 1) )
+    // create index
+    productCollection.createIndex(MongoDBObject("productId" -> 1))
+    ratingCollection.createIndex(MongoDBObject("productId" -> 1))
+    ratingCollection.createIndex(MongoDBObject("userId" -> 1))
 
     mongoClient.close()
+
   }
 }
