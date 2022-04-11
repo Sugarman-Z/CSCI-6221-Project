@@ -9,22 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>OfflineRecommender</artifactId>
+    <artifactId>OnlineRecommender</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
+
     <dependencies>
-
-        <!-- java matrix computation -->
-        <dependency>
-            <groupId>org.scalanlp</groupId>
-            <artifactId>jblas</artifactId>
-            <version>${jblas.version}</version>
-        </dependency>
-
         <!-- Spark dependency -->
         <dependency>
             <groupId>org.apache.spark</groupId>
@@ -34,10 +27,9 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
         </dependency>
-        <!-- machine learning lib -->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_2.11</artifactId>
+            <artifactId>spark-streaming_2.11</artifactId>
         </dependency>
         <!-- intro Scala -->
         <dependency>
@@ -57,7 +49,26 @@
             <artifactId>mongo-spark-connector_2.11</artifactId>
             <version>${mongodb-spark.version}</version>
         </dependency>
-    </dependencies>
 
+        <!-- redis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
+        <!-- kafka -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.10.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+
+    </dependencies>
 
 </project>
