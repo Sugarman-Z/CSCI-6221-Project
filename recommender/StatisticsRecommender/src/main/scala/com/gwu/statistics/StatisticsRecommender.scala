@@ -51,7 +51,7 @@ object StatisticsRecommender {
     // create temporary ratings view for spark sql
     ratingDF.createOrReplaceTempView("ratings")
 
-    // TODO: use spark sql to do various statistic recommendation
+    // use spark sql to do various statistic recommendation
     // 1. history hot product, use rating counts. (productId, count)
     val rateMoreProductsDF = spark.sql("select productId, count(productId) as count " +
       "from ratings " +
