@@ -135,7 +135,7 @@ public class ProductRestApi {
     // 离线推荐
     @RequestMapping(value = "/offline", produces = "application/json", method = RequestMethod.GET )
     @ResponseBody
-    public Model getOfflineProducts(@RequestParam("username")String username,@RequestParam("num")int num, Model model) {
+    public Model getOfflineProducts(@RequestParam("username")String username, @RequestParam("num")int num, Model model) {
         User user = userService.findByUsername(username);
         List<Recommendation> recommendations = recommenderService.getCollaborativeFilteringRecommendations(new UserRecommendationRequest(user.getUserId(), num));
         model.addAttribute("success",true);

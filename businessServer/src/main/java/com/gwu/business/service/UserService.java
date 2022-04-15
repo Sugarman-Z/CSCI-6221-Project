@@ -35,6 +35,7 @@ public class UserService {
     }
 
     public boolean registerUser(RegisterUserRequest request){
+//        System.out.println("start register");
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
