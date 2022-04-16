@@ -13,6 +13,12 @@
     <packaging>pom</packaging>
     <modules>
         <module>DataLoader</module>
+        <module>StatisticsRecommender</module>
+        <module>OfflineRecommender</module>
+        <module>OnlineRecommender</module>
+        <module>KafkaStreaming</module>
+        <module>ContentRecommender</module>
+        <module>ItemCFRecommender</module>
     </modules>
 
     <properties>
@@ -22,7 +28,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- 引入Spark相关的Jar包 -->
+            <!-- Spark related jar package -->
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-core_2.11</artifactId>
@@ -58,7 +64,7 @@
 
     <build>
         <plugins>
-            <!-- 父项目已声明该plugin，子项目在引入的时候，不用声明版本和已经声明的配置 -->
+            <!--parent has already declare version-->
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
