@@ -6,10 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="KafkaStreaming" />
         <module name="DataLoader" />
         <module name="StatisticsRecommender" />
         <module name="OnlineRecommender" />
+        <module name="ItemCFRecommender" />
+        <module name="KafkaStreaming" />
+        <module name="ContentRecommender" />
         <module name="OfflineRecommender" />
         <module name="businessServer" />
       </profile>

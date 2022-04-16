@@ -5,6 +5,7 @@
       <paths name="grayson">
         <serverdata>
           <mappings>
+            <mapping local="$PROJECT_DIR$/recommender" web="/" />
             <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>

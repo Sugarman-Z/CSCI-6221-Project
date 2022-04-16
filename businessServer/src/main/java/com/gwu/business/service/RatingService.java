@@ -12,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
@@ -65,6 +66,7 @@ public class RatingService {
 
     private boolean newRating(Rating rating) {
         try {
+            System.out.println("开始写入Rating表");
             getRatingCollection().insertOne(Document.parse(objectMapper.writeValueAsString(rating)));
             return true;
         } catch (JsonProcessingException e) {

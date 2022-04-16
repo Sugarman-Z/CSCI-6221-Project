@@ -115,7 +115,7 @@ object offlineRecommender {
           val simScore = cosineSim( a._2, b._2 )
           ( a._1, ( b._1, simScore ) )
       }
-      .filter(_._2._2>0.4)
+      .filter(_._2._2 > 0.4)
       .groupByKey()
       .map {
         case (productId, recs) =>
