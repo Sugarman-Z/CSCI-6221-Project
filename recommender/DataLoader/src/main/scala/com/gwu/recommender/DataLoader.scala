@@ -45,7 +45,7 @@ case class MongoConfig(uri: String, db: String)
 object DataLoader {
 
   // define file path
-  val PRODUCT_DATA_PATH = "recommender/DataLoader/src/main/resources/products.csv"
+  val PRODUCT_DATA_PATH = "recommender/DataLoader/src/main/resources/products_en.csv"
   val RATING_DATA_PATH = "recommender/DataLoader/src/main/resources/ratings.csv"
   // define mongo table name
   val MONGODB_PRODUCT_COLLECTION = "Product"

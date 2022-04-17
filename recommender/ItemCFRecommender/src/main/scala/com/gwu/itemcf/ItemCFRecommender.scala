@@ -53,7 +53,7 @@ object ItemCFRecommender {
       .toDF("userId", "productId", "score")
       .cache()
 
-    // TODO: core algorithm (calculate co-occurrence similarity and get product similarity)
+    // core algorithm (calculate co-occurrence similarity and get product similarity)
     // 1. Count the number of ratings for each item
     // group by productId
     val productRatingCountDF = ratingDF.groupBy("productId").count()

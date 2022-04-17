@@ -10,7 +10,7 @@ case class ProductRating(
                    userId: Int,
                    productId: Int,
                    score: Double,
-                   timestamp: Int
+                   timestamp: Long
                  )
 
 case class MongoConfig(uri: String, db: String)
