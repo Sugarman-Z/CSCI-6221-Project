@@ -124,11 +124,11 @@ public class ProductRestApi {
         boolean complete = ratingService.productRating(request);
         //埋点日志
         if(complete) {
-            System.out.print("=========埋点=========");
+            System.out.print("=========potential=========");
             logger.info(Constant.PRODUCT_RATING_PREFIX + ":" + user.getUserId() +"|"+ id +"|"+ request.getScore() +"|"+ System.currentTimeMillis()/1000);
         }
         model.addAttribute("success",true);
-        model.addAttribute("message"," 已完成评分！");
+        model.addAttribute("message"," rate successfully！");
         return model;
     }
 

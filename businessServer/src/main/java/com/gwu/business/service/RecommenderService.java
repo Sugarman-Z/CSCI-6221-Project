@@ -30,7 +30,6 @@ public class RecommenderService {
         for (Document document : documents) {
             recommendations.add(new Recommendation(document.getInteger("productId"), 0D));
         }
-        System.out.println(recommendations);
         return recommendations;
     }
 

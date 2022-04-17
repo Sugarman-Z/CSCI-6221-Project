@@ -66,7 +66,6 @@ public class RatingService {
 
     private boolean newRating(Rating rating) {
         try {
-            System.out.println("开始写入Rating表");
             getRatingCollection().insertOne(Document.parse(objectMapper.writeValueAsString(rating)));
             return true;
         } catch (JsonProcessingException e) {

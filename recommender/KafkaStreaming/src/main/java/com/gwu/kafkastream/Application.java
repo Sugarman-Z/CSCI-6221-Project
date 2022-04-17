@@ -26,12 +26,12 @@ public class Application {
 
         // define topology builder
         TopologyBuilder builder = new TopologyBuilder();
+
         builder.addSource("SOURCE", from)
-                .addProcessor("PROCESSOR", () -> new LogProcessor(), "SOURCE")
+                .addProcessor("PROCESSOR", LogProcessor::new, "SOURCE")
                 .addSink("SINK", to, "PROCESSOR");
 
-        // create kafka stream
-        KafkaStreams streams = new KafkaStreams( builder, config );
+        KafkaStreams streams = new KafkaStreams(builder, config);
 
         streams.start();
         System.out.println("kafka stream started!");

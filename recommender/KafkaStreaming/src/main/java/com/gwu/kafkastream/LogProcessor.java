@@ -19,11 +19,10 @@ public class LogProcessor implements Processor<byte[], byte[]> {
         String input = new String(line);
         // extract data from log
         if(input.contains("PRODUCT_RATING_PREFIX:")){
-            System.out.println("product rating data coming!!!!" + input);
+            System.out.println("product rating coming!!!!" + input);
             input = input.split("PRODUCT_RATING_PREFIX:")[1].trim();
             context.forward("logProcessor".getBytes(), input.getBytes());
         }
-
 
     }
 
